@@ -7,7 +7,7 @@ urls = {Repository = "https://github.com/VectorInstitute/interpretability-llms-a
 readme = "README.md"
 license = "LicenseRef-Vector-Institute-License"
 license-files = ["LICENSE.md"]
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "aieng-llm-interp",
     "datasets>=4.0.0",
@@ -23,6 +23,7 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "scikit-learn>=1.5.2",
     "transformers>=4.47.0",
+    "langfuse>=3.10.3",
 ]
 
 [dependency-groups]
@@ -33,6 +34,7 @@ agentic-xai-eval = [
     "streamlit>=1.55.0",
 ]
 dev = [
+    "aieng-platform-onboard>=0.6.2",
     "codecov>=2.1.13",
     "nbqa>=1.9.1",
     "pip-audit>=2.10.0",
