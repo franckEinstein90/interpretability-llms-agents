@@ -51,35 +51,81 @@ This is required for embedding video/audio segments.
 mkdir -p data
 ```
 
-### VQA JSON Files (Place in `data/`)
+### VQA JSON Files
 
-Download:
+These are included in the GCP download below for convenience — same files as the SONIC-O1 HuggingFace dataset. They define the multiple-choice video QA tasks.
 
-* [https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/02_Job_Interviews.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/02_Job_Interviews.json)
-* [https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/04_Customer_Service_Interactions.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/04_Customer_Service_Interactions.json)
-* [https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/01_Patient-Doctor_Consultations.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/01_Patient-Doctor_Consultations.json)
+If you prefer to download them individually:
 
-These define the multiple-choice video QA tasks.
+- [02_Job_Interviews.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/02_Job_Interviews.json)
+- [04_Customer_Service_Interactions.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/04_Customer_Service_Interactions.json)
+- [01_Patient-Doctor_Consultations.json](https://huggingface.co/datasets/vector-institute/sonic-o1/blob/main/vqa/task2_mcq/01_Patient-Doctor_Consultations.json)
 
 ### Video / Audio / Caption Files
 
-Download from:
+The media dataset is hosted in a GCP bucket.
 
-```
-<GOOGLE_DRIVE_LINK_PLACEHOLDER>
-```
-
-Extract contents into:
+#### 1) Authenticate with GCP
 
 ```bash
-data/
+gcloud auth login
+gcloud auth application-default login
+# When prompted, enter the email you used to log into the coder platform.
+# A browser window will open for Google sign-in. After signing in, you will receive a code.
+# Copy that code back into the terminal to complete authentication.
+gcloud config set account YOUR_EMAIL
 ```
 
-The expected structure includes:
+Verify active account:
 
-* video
-* audio
-* caption
+```bash
+gcloud auth list
+```
+
+#### 2) Download Dataset
+
+```bash
+cd implementations/multimedia_rag
+gcloud storage cp gs://interp-bootcamp-data/multimedia_rag/data.zip .
+unzip data.zip
+```
+
+Files are placed correctly after extraction — no manual reorganisation needed.
+
+#### 3) Cleanup temporary files
+
+```bash
+rm -f __MACOSX data.zip data/.DS_Store
+```
+
+The zip contains everything needed to run the notebooks:
+
+```
+data/
+├── Customer_Service_Interactions/
+│   ├── audio/                   # base audio files
+│   ├── video/                   # base video files
+│   ├── caption/                 # base caption files
+│   ├── process-audio/           # pre-generated, can be regenerated
+│   ├── process-video/           # pre-generated, can be regenerated
+│   ├── segment-audio_30s/       # pre-generated, can be regenerated
+│   ├── segment-video_30s/       # pre-generated, can be regenerated
+│   ├── segment-caption_30s/     # pre-generated, can be regenerated
+│   ├── audio_embeddings.pt      # pre-generated, can be regenerated
+│   ├── video_embeddings.pt      # pre-generated, can be regenerated
+│   └── caption_embeddings.pt    # pre-generated, can be regenerated
+├── Job_Interviews/              # same structure as above
+├── Patient-Doctor_Consultations/  # same structure as above
+├── global_embeddings/           # pre-generated, can be regenerated
+├── Customer_Service_Interactions.json
+├── Customer_Service_Interactions_filtered.json  # pre-generated, can be regenerated
+├── Job_Interviews.json
+├── Job_Interviews_filtered.json               # pre-generated, can be regenerated
+├── Patient-Doctor_Consultations.json
+└── Patient-Doctor_Consultations_filtered.json # pre-generated, can be regenerated
+```
+
+Pre-generated files (`process-*`, `segment-*`, `*.pt` embeddings, `global_embeddings/`, `*_filtered.json`) are included to save time, but can all be reproduced by running the notebooks from scratch.
 
 ---
 
@@ -121,11 +167,6 @@ This installs everything needed for both the Video RAG (ImageBind embedding + re
 ```bash
 jupyter lab
 ```
-
-Choose:
-
-* **Ref5 (Video RAG)** → retrieval pipeline
-* **Ref5 (Video QA)** → multimodal QA evaluation
 
 ---
 

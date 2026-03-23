@@ -76,28 +76,46 @@ This directly optimizes the model to prefer correct judgments while maintaining 
 
 The filtered `.parquet` files are not included in this repository.
 
-Please follow one of the options below to obtain the dataset.
-
----
-
-## Download Pre-Filtered Dataset (Recommended)
+### Download Pre-Filtered Dataset (Recommended)
 
 The filtered dataset used in this implementation is hosted in a GCP bucket.
 
-Download the `.parquet` files using:
+#### 1) Authenticate with GCP
 
 ```bash
-gsutil cp gs://<bucket-name>/reference_implementation_4/*.parquet .
+gcloud auth login
+gcloud auth application-default login
+# When prompted, enter the email you used to log into the coder platform.
+# A browser window will open for Google sign-in. After signing in, you will receive a code.
+# Copy that code back into the terminal to complete authentication.
+gcloud config set account YOUR_EMAIL
 ```
 
-***Do not download the ```train_raw.parquet```, use the ```train_sponsor_filtered.parquet``` for data_sky or ```train_singleturn_sponsor_filtered.parquet``` for data_hh_rlhf***
+Verify active account:
 
-After downloading, place the ```.parquet``` file inside one of the following folders (create the folder if it does not exist):
-```data_sky/```  or
-```data_hh_rlhf/```
-Then proceed with:
+```bash
+gcloud auth list
+```
 
-```01_dataset_construction.ipynb```
+#### 2) Download Dataset
+
+```bash
+cd implementations/preference_alignment
+gcloud storage cp gs://interp-bootcamp-data/preference-alignment/data.zip .
+unzip data.zip
+```
+
+Files are placed correctly after extraction — no manual reorganisation needed.
+
+#### 3) Cleanup temporary files:
+
+```bash
+rm -f __MACOSX data.zip data/.DS_Store
+```
+
+> **Note:** Use `train_sponsor_filtered.parquet` (for `data_sky`) and `train_singleturn_sponsor_filtered.parquet` (for `data_hh_rlhf`).
+
+Then proceed with `01_dataset_construction.ipynb`.
 
 ## Using Your Own Dataset
 
@@ -196,7 +214,7 @@ source .venv/bin/activate
 `flash-attn` requires CUDA headers and `setuptools` at compile time and cannot be installed via `uv sync`. After activating the venv, install it manually:
 
 ```bash
-pip install flash-attn==2.7.3 --no-build-isolation
+uv pip install flash-attn==2.7.3 --no-build-isolation
 ```
 
 > **Note:** This step requires a GPU node with CUDA available. Skip it if you are running on a CPU-only machine.
