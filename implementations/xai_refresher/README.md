@@ -152,6 +152,71 @@ For further reading on the methods covered in this module:
 **Concept Grounding in VLMs**
 - Parekh, Jayneel, et al. "A Concept-based Explainability Framework for Large Multimodal Models." *NeurIPS*, 37, 2024.
 
+## Dataset Preparation (Concept Grounding Notebook)
+
+The [concept_grounding.ipynb](concept_grounding.ipynb) notebook requires two directories:
+
+### `data/` — COCO Images and Captions
+
+The notebook downloads these automatically when you run the download cells:
+
+- Caption annotations from Stanford (`dataset_coco.json`, etc.)
+- COCO image splits (`train2014/`, `val2014/`, `test2014/`)
+
+No manual setup is needed — just run the notebook cells in order.
+
+### `results/` — Pre-computed Features (Recommended Download)
+
+Feature extraction from LLaVA is GPU-intensive and time-consuming. Pre-computed `.pth` files are available from GCP so you can skip directly to the decomposition and analysis steps.
+
+#### 1) Authenticate with GCP
+
+```bash
+gcloud auth login
+gcloud auth application-default login
+# When prompted, enter the email you used to log into the coder platform.
+# A browser window will open for Google sign-in. After signing in, you will receive a code.
+# Copy that code back into the terminal to complete authentication.
+gcloud config set account YOUR_EMAIL
+```
+
+Verify active account:
+
+```bash
+gcloud auth list
+```
+
+#### 2) Download Pre-computed Results
+
+```bash
+cd implementations/xai_refresher
+gcloud storage cp gs://interp-bootcamp-data/xai_refresher/results.zip .
+unzip results.zip
+```
+
+#### 3) Cleanup temporary files
+
+```bash
+rm -f __MACOSX results.zip .DS_Store
+```
+
+After setup, your directory should contain:
+
+```
+implementations/xai_refresher/
+├── results/
+│   ├── features/
+│   │   ├── save_hidden_states_for_token_of_interest_llava_dog_generation_split_train.pth
+│   │   ├── save_hidden_states_for_token_of_interest_llava_dog_generation_split_test.pth
+│   │   └── ...   (one train + one test file per token: dog, vase, laptop, sandwich)
+│   └── decompose_activations_text_grounding_image_grounding_results_train_{token}.pth
+└── ...
+```
+
+> **Note:** If you prefer to generate these yourself, run the feature extraction cells in `concept_grounding.ipynb` — a GPU is required.
+
+---
+
 ## Getting Started
 
 1. From the **root of the repository**, install the `xai-refresher` dependency group using `uv`:
